@@ -12,8 +12,8 @@ class TaskList(QWidget):
         self.setStructure()
         self.createConnection()
         self.initTables()
-        self.load_task()
-        self.load_categories()
+        self.get_task()
+        self.get_categories()
 
 
     def initUI(self):
@@ -34,11 +34,11 @@ class TaskList(QWidget):
         self.task_list, self.task_list_of_categories = [QListWidget() for i in range(2)]
 
         self.btn_all_tasks = QPushButton("Все задачи", self)
-        self.btn_all_tasks.clicked.connect(self.load_task)
+        self.btn_all_tasks.clicked.connect(self.get_task)
         self.btn_active_tasks = QPushButton("Активные задачи", self)
-        self.btn_active_tasks.clicked.connect(self.active_task)
+        self.btn_active_tasks.clicked.connect(self.get_active_task)
         self.btn_complete_tasks = QPushButton("Выполненные задачи", self)
-        self.btn_complete_tasks.clicked.connect(self.complete_task)
+        self.btn_complete_tasks.clicked.connect(self.get_complete_task)
 
         self.btn_add_tasks = QPushButton("Добавить задачу", self)
         self.btn_add_tasks.clicked.connect(self.add_task)
@@ -50,7 +50,7 @@ class TaskList(QWidget):
         self.btn_clear_tasks.clicked.connect(self.clear_task)
 
         self.btn_all_categories = QPushButton("Все категории", self)
-        self.btn_all_categories.clicked.connect(self.load_categories)
+        self.btn_all_categories.clicked.connect(self.get_categories)
         self.btn_clear_categories = QPushButton("Очистить поле категории", self)
         self.btn_clear_categories.clicked.connect(self.clear_categories)
         self.btn_add_categories = QPushButton("Добавить категорию", self)
@@ -192,7 +192,7 @@ class TaskList(QWidget):
         self.category_id_line.clear()
 
 
-    def load_task(self, status : str = ""):
+    def get_task(self, status : str = ""):
         if status == "Активные задачи":
             query = f"""
                         SELECT *
@@ -221,12 +221,12 @@ class TaskList(QWidget):
             self.task_list.addItem(QListWidgetItem(task[1]))
 
 
-    def active_task(self):
-        self.load_task(str("Активные задачи"))
+    def get_active_task(self):
+        self.get_task(str("Активные задачи"))
 
 
-    def complete_task(self):
-        self.load_task(str("Выполненные задачи"))
+    def get_complete_task(self):
+        self.get_task(str("Выполненные задачи"))
 
 
     def add_task(self):
@@ -250,7 +250,7 @@ class TaskList(QWidget):
             """
         )
         print(self.query.lastError().text() if not self.query.isActive() else "Запрос активен")
-        self.load_task()
+        self.get_task()
 
 
     def change_task(self):
@@ -290,7 +290,7 @@ class TaskList(QWidget):
         current_task.setText(new_task_name)
         self.task_dicrpt_text.setText(new_task_description)
         print(f"Обновленная задача: {new_task_name} - {new_task_description} - {new_active_task_bool}")
-        self.load_task()
+        self.get_task()
 
 
     def delete_task(self):
@@ -314,13 +314,13 @@ class TaskList(QWidget):
                 QMessageBox.information(self, "Информация", "Задача не найдена.")
             print(self.query.lastError().text() if not self.query.isActive() else "Запрос активен")
             self.task_list.takeItem(self.task_list.row(current_task))
-            self.load_task()
+            self.get_task()
         except Exception as e:
             QMessageBox.critical(self, "Ошибка", f"При удалении задачи произошла ошибка: {e}")
             print(f"Ошибка: {e}")
 
 
-    def load_categories(self):
+    def get_categories(self):
         self.query.exec(
             f"""
                 SELECT *
@@ -348,7 +348,7 @@ class TaskList(QWidget):
             """
         )
         print(self.query.lastError().text() if not self.query.isActive() else "Запрос активен")
-        self.load_categories()
+        self.get_categories()
 
 
     def change_categories(self):
@@ -377,7 +377,7 @@ class TaskList(QWidget):
         print(self.query.lastError().text() if not self.query.isActive() else "Запрос активен")
         current_categories.setText(new_name_categories)
         print(f"Обновленная категория: {new_name_categories}")
-        self.load_categories()
+        self.get_categories()
 
 
     def delete_categories(self):
@@ -401,7 +401,7 @@ class TaskList(QWidget):
                 QMessageBox.information(self, "Информация", "Категория не найдена.")
             print(self.query.lastError().text() if not self.query.isActive() else "Запрос активен")
             self.task_list.takeItem(self.task_list.row(current_categories))
-            self.load_categories()
+            self.get_categories()
         except Exception as e:
             QMessageBox.critical(self, "Ошибка", f"При удалении категории произошла ошибка: {e}")
             print(f"Ошибка: {e}")
