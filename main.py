@@ -4,7 +4,6 @@ from taskList import TaskList
 
 
 def main():
-    print("Привет мир")
     app = QApplication(sys.argv)
     window = TaskList()
     window.show()
