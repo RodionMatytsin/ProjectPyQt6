@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QMessageBox, QLis
 from PyQt6.QtWidgets import QPushButton, QLabel, QListWidget, QLineEdit, QTextEdit
 from PyQt6.QtCore import Qt
 
+
 class TaskList(QWidget):
     def __init__(self):
         super().__init__()
