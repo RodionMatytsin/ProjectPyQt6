@@ -1,7 +1,7 @@
 from PyQt6.QtSql import QSqlQuery, QSqlDatabase
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QMessageBox, QListWidgetItem
 from PyQt6.QtWidgets import QPushButton, QLabel, QListWidget, QLineEdit, QTextEdit
-
+from PyQt6.QtCore import Qt
 
 class TaskList(QWidget):
     def __init__(self):
