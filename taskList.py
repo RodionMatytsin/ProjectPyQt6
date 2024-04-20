@@ -1,7 +1,6 @@
-from PyQt6.QtSql import QSqlQuery, QSqlDatabase
+from database import DataBase
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QMessageBox, QListWidgetItem
 from PyQt6.QtWidgets import QPushButton, QLabel, QListWidget, QLineEdit, QTextEdit
-from PyQt6.QtCore import Qt
 
 
 class TaskList(QWidget):
@@ -9,10 +8,12 @@ class TaskList(QWidget):
         super().__init__()
         self.listOfTableNames = ["categories", "tasks"]
         self.listStatusActive = ["Активная", "Выполненная"]
+        self.db = DataBase()
+        self.db.createConnection()
+        self.db.initTables()
+        self.query = self.db.query
         self.initUI()
         self.setStructure()
-        self.createConnection()
-        self.initTables()
         self.get_task()
         self.get_categories()
 
@@ -117,42 +118,6 @@ class TaskList(QWidget):
         self.vbox.addLayout(self.hbox9)
 
         self.setLayout(self.vbox)
-
-
-    def createConnection(self):
-        self.con = QSqlDatabase.addDatabase("QSQLITE")
-        self.con.setDatabaseName("DB_tasklist.sqlite")
-        if not self.con.open():
-            QMessageBox.critical(None, "Пример QTableView — ошибка!",
-                "Ошибка базы данных: %s" % self.con.lastError().databaseText(),
-            )
-            return False
-        return True
-
-
-    def initTables(self):
-        self.con.open()
-        self.query = QSqlQuery()
-        self.query.exec(
-            f"""
-                CREATE TABLE IF NOT EXISTS {self.listOfTableNames[0]} (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name VARCHAR(255) NOT NULL
-                )
-            """
-        )
-        self.query.exec(
-            f"""
-                CREATE TABLE IF NOT EXISTS {self.listOfTableNames[1]} (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name VARCHAR(255) NOT NULL,
-                    description VARCHAR(255) NOT NULL,
-                    active VARCHAR(3) NOT NULL,
-                    category_id INTEGER,
-                    FOREIGN KEY (category_id) REFERENCES categories (id)
-                )
-            """
-        )
 
 
     def onListItemClicked(self):
